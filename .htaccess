@@ -1,13 +1,25 @@
-Options +FollowSymLinks -MultiViews -Indexes
-# Turn mod_rewrite on
-RewriteEngine On
-RewriteBase /
+# Basic configuration
+Options -Indexes
+ServerSignature Off
 
-## hide .php extension
-# To externally redirect /dir/foo.php to /dir/foo
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
-RewriteRule ^ %1 [R,L,NC]
+# Basic security headers
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
 
-## To internally redirect /dir/foo to /dir/foo.php
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^ %{REQUEST_URI}.php [L]
+# Simple error documents
+ErrorDocument 403 /IRS/error.php?code=403
+ErrorDocument 404 /IRS/error.php?code=404
+ErrorDocument 500 /IRS/error.php?code=500
+
+# Block access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|tpl|txt|xml|json|lock)$">
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>

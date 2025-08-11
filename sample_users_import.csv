@@ -1,0 +1,5 @@
+username,email,full_name,department,position,phone_no
+john.doe,john@example.com,John Doe,IT,Developer,+94123456789
+jane.smith,jane@example.com,Jane Smith,HR,Manager,+94123456788
+bob.johnson,,Bob Johnson,Finance,Accountant,+94123456787
+alice.williams,alice@example.com,Alice Williams,Marketing,Coordinator,+94123456786
