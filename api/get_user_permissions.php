@@ -1,16 +1,36 @@
 <?php
 // Include configuration and session
 include_once("../config.php");
-session_start();
 
-// Check if user is logged in
-if (!isset($_SESSION['user_name'])) {
-    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in and is admin
+if (!isset($_SESSION['user_name']) || $_SESSION['user_type'] != 'ADM') {
+    echo json_encode(['success' => false, 'message' => 'Not authorized']);
     exit;
 }
 
-// Get username from session
-$username = $_SESSION['user_name'];
+// Get user ID from request
+if (!isset($_POST['user_id']) || empty($_POST['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'User ID is required']);
+    exit;
+}
+
+$userId = $con->real_escape_string($_POST['user_id']);
+
+// Get username from database
+$userQuery = $con->query("SELECT user_name, user_table FROM `user` WHERE user_id = '$userId'");
+if (!$userQuery || $userQuery->num_rows === 0) {
+    echo json_encode(['success' => false, 'message' => 'User not found']);
+    exit;
+}
+
+$userData = $userQuery->fetch_assoc();
+$username = $userData['user_name'];
+$userType = $userData['user_table'];
 
 // Default response with default permissions
 $response = [
@@ -48,6 +68,31 @@ try {
                 $response['permissions'] = array_merge($response['permissions'], $dbPermissions);
             }
             $stmt->close();
+        } else {
+            // If no permissions found, set default permissions based on user type
+            if ($userType === 'staff') {
+                $response['permissions'] = [
+                    'viewProfile' => true,
+                    'editProfile' => true,
+                    'emailNotifications' => true,
+                    'enrollModules' => false,
+                    'viewGrades' => true,
+                    'manageUsers' => false,
+                    'manageContent' => false,
+                    'viewReports' => true
+                ];
+            } else if ($userType === 'student') {
+                $response['permissions'] = [
+                    'viewProfile' => true,
+                    'editProfile' => true,
+                    'emailNotifications' => true,
+                    'enrollModules' => true,
+                    'viewGrades' => true,
+                    'manageUsers' => false,
+                    'manageContent' => false,
+                    'viewReports' => false
+                ];
+            }
         }
     }
     

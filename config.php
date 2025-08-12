@@ -1,5 +1,21 @@
 <?php
-session_start();
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    // Set session cookie parameters before starting the session
+    $cookieParams = session_get_cookie_params();
+    session_set_cookie_params([
+        'lifetime' => $cookieParams["lifetime"],
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'] ?? 'localhost',
+        'secure' => isset($_SERVER['HTTPS']),
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    
+    // Start the session
+    session_start();
+}
+
 date_default_timezone_set('Asia/Colombo');
 //database connection
 define('DB_HOST','localhost');

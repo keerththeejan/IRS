@@ -414,6 +414,9 @@ if($u_ta=='staff'){
                 <li>
                   <a href="PrecreatedUsers">Precreated Users</a>
                 </li>
+                <li>
+                <a href="permissions">Permissions</a>
+                </li>
               </ul>
             </div>
           </li><?php } ?>  

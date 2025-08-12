@@ -106,9 +106,7 @@ function time_elapsed_string($datetime, $full = false) {
                 <li class="nav-item">
                     <a href="" data-target="#EnrolledModules" data-toggle="tab" class="nav-link">Enrolled Modules</a>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="permissions-tab" data-bs-toggle="tab" data-bs-target="#permissions" type="button" role="tab" aria-controls="permissions" aria-selected="false">Permissions</button>
-                </li>
+               
                 <li class="nav-item">
                     <a href="" data-target="#edit" data-toggle="tab" class="nav-link">Change Password</a>
                 </li>
